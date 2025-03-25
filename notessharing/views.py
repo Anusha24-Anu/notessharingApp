@@ -1,30 +1,23 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
-from nssapp.models import CustomUser, UserReg, Notes
+from nssapp.models import CustomUser,UserReg,Notes
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-from django.core.exceptions import ObjectDoesNotExist
-
 User = get_user_model()
 
+def Index(request):
+       return render(request,'index.html')
 
-def index(request):
-    """Render the home page."""
-    return render(request, 'index.html')
+@login_required(login_url = '/')
 
 
-@login_required(login_url='/')
-def base(request):
-    """Render the base page."""
+def BASE(request):
     return render(request, 'base.html')
 
-
-@login_required(login_url='/')
-def dashboard(request):
-    """Render the dashboard for the logged-in user."""
+def DASHBOARD(request):
     user_admin = request.user
     try:
         user_reg = UserReg.objects.get(admin=user_admin)
@@ -57,29 +50,28 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 
-def login_view(request):
-    """Render the login page."""
-    return render(request, 'login.html')
+def LOGIN(request):
+    return render(request,'login.html')
 
 
-def do_logout(request):
-    """Logout the user and clear the session."""
+def doLogout(request):
     logout(request)
     request.session.flush()  # Clear the session including CSRF token
     return redirect('login')
 
-
-def do_login(request):
-    """Authenticate and login the user."""
+def doLogin(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+       
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             user_type = user.user_type
-            if user_type == '1' or user_type == '2':
+            if user_type == '1':
+                return redirect('dashboard')
+            elif user_type == '2':
                 return redirect('dashboard')
         else:
             messages.error(request, 'Email or Password is not valid')
@@ -90,48 +82,50 @@ def do_login(request):
         return redirect('login')
 
 
-def user_signup(request):
-    """Handle user signup and registration."""
+def USERSIGNUP(request):
+   
     if request.method == "POST":
         pic = request.FILES.get('pic')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         username = request.POST.get('username')
         email = request.POST.get('email')
-        mobno = request.POST.get('mobno')
+        mobno = request.POST.get('mobno')        
         password = request.POST.get('password')
 
         if CustomUser.objects.filter(email=email).exists():
-            messages.warning(request, 'Email already exists')
+            messages.warning(request,'Email already exist')
             return redirect('usersignup')
         if CustomUser.objects.filter(username=username).exists():
-            messages.warning(request, 'Username already exists')
+            messages.warning(request,'Username already exist')
             return redirect('usersignup')
         else:
             user = CustomUser(
-                first_name=first_name,
-                last_name=last_name,
-                username=username,
-                email=email,
-                user_type=2,
-                profile_pic=pic,
+               first_name=first_name,
+               last_name=last_name,
+               username=username,
+               email=email,
+               user_type=2,
+               profile_pic = pic,
             )
             user.set_password(password)
-            user.save()
+            user.save()            
             nsuser = UserReg(
-                admin=user,
-                mobilenumber=mobno,
+                admin = user,                
+                mobilenumber = mobno,              
+                
             )
-            nsuser.save()
-            messages.success(request, 'Signup Successful')
+            nsuser.save()            
+            messages.success(request,'Signup Successfully')
             return redirect('usersignup')
+    
+    
 
-    return render(request, 'signup.html')
+    return render(request,'signup.html')
 
 
 @login_required(login_url='/')
-def profile(request):
-    """Render and update the user profile."""
+def PROFILE(request):
     if request.method == "POST":
         try:
             customuser = CustomUser.objects.get(id=request.user.id)
@@ -140,7 +134,7 @@ def profile(request):
             # Update user data
             customuser.first_name = request.POST.get('first_name', customuser.first_name)
             customuser.last_name = request.POST.get('last_name', customuser.last_name)
-
+            
             if 'profile_pic' in request.FILES:
                 customuser.profile_pic = request.FILES['profile_pic']
             customuser.save()
@@ -151,6 +145,7 @@ def profile(request):
             messages.error(request, "User profile not found")
         except Exception as e:
             messages.error(request, f"An error occurred: {str(e)}")
+
     else:
         try:
             user = CustomUser.objects.get(id=request.user.id)
@@ -167,35 +162,32 @@ def profile(request):
         return render(request, 'profile.html', context)
 
 
-def change_password(request):
-    """Allow the user to change their password."""
-    context = {}
-    ch = User.objects.filter(id=request.user.id)
-
-    if len(ch) > 0:
-        data = User.objects.get(id=request.user.id)
-        context["data"] = data
-
-    if request.method == "POST":
+def CHANGE_PASSWORD(request):
+     context ={}
+     ch = User.objects.filter(id = request.user.id)
+     
+     if len(ch)>0:
+            data = User.objects.get(id = request.user.id)
+            context["data"]:data            
+     if request.method == "POST":        
         current = request.POST["cpwd"]
         new_pas = request.POST['npwd']
-        user = User.objects.get(id=request.user.id)
+        user = User.objects.get(id = request.user.id)
         un = user.username
         check = user.check_password(current)
-        if check:
-            user.set_password(new_pas)
-            user.save()
-            messages.success(request, 'Password Changed Successfully!!!')
-            user = User.objects.get(username=un)
-            login(request, user)
+        if check == True:
+          user.set_password(new_pas)
+          user.save()
+          messages.success(request,'Password Change  Succeesfully!!!')
+          user = User.objects.get(username=un)
+          login(request,user)
         else:
-            messages.success(request, 'Current Password is incorrect!!!')
-            return redirect("change_password")
-    return render(request, 'change-password.html')
+          messages.success(request,'Current Password wrong!!!')
+          return redirect("change_password")
+     return render(request,'change-password.html')
 
 
-def add_notes(request):
-    """Allow the user to add new notes."""
+def ADD_NOTES(request):
     if request.method == "POST":
         title = request.POST.get('notestitle')
         subject = request.POST.get('subject')
@@ -209,26 +201,23 @@ def add_notes(request):
 
         notes = Notes(
             notestitle=title,
-            subject=subject,
-            notesdesc=description,
-            file1=file1,
-            file2=file2,
-            file3=file3,
-            file4=file4,
-            nsuser=userreg,
+            subject = subject,
+            notesdesc = description,
+            file1 = file1,
+            file2 = file2,
+            file3 = file3,
+            file4 = file4,
+            nsuser = userreg,
         )
         notes.save()
         messages.success(request, 'Notes Added Successfully')
         return redirect("add_notes")
-
     return render(request, 'add-notes.html')
 
-
-@login_required(login_url='/')
-def manage_notes(request):
-    """Manage notes by paginating them."""
+login_required(login_url='/')
+def MANAGE_NOTES(request):
     userreg = UserReg.objects.get(admin_id=request.user.id)
-    data_list = Notes.objects.filter(nsuser=userreg)
+    data_list = Notes.objects.filter(nsuser = userreg)
     paginator = Paginator(data_list, 10)  # Show 10 data per page
 
     page_number = request.GET.get('page')
@@ -238,35 +227,32 @@ def manage_notes(request):
         # If page is not an integer, deliver first page.
         data_list = paginator.page(1)
     except EmptyPage:
-        # If page is out of range (e.g., 9999), deliver last page of results.
+        # If page is out of range (e.g. 9999), deliver last page of results.
         data_list = paginator.page(paginator.num_pages)
 
-    context = {'data_list': data_list}
+    context = {'data_list': data_list,
+   }
     return render(request, 'manage-notes.html', context)
 
-
-@login_required(login_url='/')
-def delete_notes(request, id):
-    """Delete a specific note."""
-    del_data = Notes.objects.get(id=id)
-    del_data.delete()
-    messages.success(request, 'Record Deleted Successfully!!!')
-    return redirect('manage_notes')
+login_required(login_url='/')
+def DELETE_NOTES(request,id):
+       del_data = Notes.objects.get(id = id)
+       del_data.delete()
+       messages.success(request,'Record Delete Succeesfully!!!')
+       return redirect('manage_notes')
 
 
-@login_required(login_url='/')
-def view_notes(request, id):
-    """View the details of a specific note."""
-    data_notes = Notes.objects.get(id=id)
+login_required(login_url='/')
+def VIEW_NOTES(request,id):    
+    data_notes = Notes.objects.get(id =id)    
     context = {
-        "data_notes": data_notes,
+        
+        "data_notes":data_notes,
     }
-    return render(request, 'update_notes.html', context)
-
+    return render(request,'update_notes.html',context)
 
 @login_required(login_url='/')
-def edit_notes(request):
-    """Edit an existing note."""
+def EDIT_NOTES(request):
     if request.method == "POST":
         data_id = request.POST.get('notes_id')
         try:
@@ -300,8 +286,7 @@ def edit_notes(request):
     return render(request, 'manage-notes.html')
 
 
-def search_notes(request):
-    """Search for notes based on query."""
+def SEARCH_NOTES(request):
     if request.method == "GET":
         # Clear existing messages
         storage = messages.get_messages(request)
@@ -324,14 +309,14 @@ def search_notes(request):
 
             return render(request, 'search.html', {'searchdata': searchdata, 'query': query})
         else:
+            
             return render(request, 'search.html', {'searchdata': [], 'query': query})
 
     return render(request, 'search.html', {'searchdata': [], 'query': ''})
 
 
-@login_required(login_url='/')
-def notes_details(request):
-    """View details of all notes with pagination."""
+login_required(login_url='/')
+def NOTES_DETAILS(request):    
     data_list = Notes.objects.all()
     paginator = Paginator(data_list, 10)  # Show 10 data per page
 
@@ -342,10 +327,12 @@ def notes_details(request):
         # If page is not an integer, deliver first page.
         data_list = paginator.page(1)
     except EmptyPage:
-        # If page is out of range (e.g., 9999), deliver last page of results.
-        data_list = paginator.page(paginator.num_pages)
-
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        data_list = paginator.page(paginator.num_pages)  
     context = {
-        "data_list": data_list,
+        
+        "data_list":data_list,
     }
-    return render(request, 'notes.html', context)
+    return render(request,'notes.html',context)
+
+
