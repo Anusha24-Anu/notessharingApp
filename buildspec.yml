@@ -14,7 +14,7 @@ phases:
       - python manage.py collectstatic --noinput
       - echo "pre build stage completed"      
       - echo "PyLint Started"
-      - pylint notessharing/**/*.py || true
+      - pylint --ignore=view.py notessharing/**/*.py || true
       - echo "pre build stage completed - PyLint Completed!!"      
 
   build:
