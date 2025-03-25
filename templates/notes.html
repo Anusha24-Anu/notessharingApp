@@ -1,0 +1,237 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>SmartNotes|| Home Page</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        
+
+        /* Header styles */
+        .header-area {
+        background-color: #22577a;
+        padding: 10px 0;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+      }
+
+        h1, h3, h4 {
+            color: #4e54c8;
+        }
+
+        .main-nav ul li a {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .main-banner {
+            padding: 120px 0;
+            margin-top: 70px;
+            background: linear-gradient(135deg, #38a3a5, #8f94fb);
+            text-align: center;
+            color: #fff;
+        }
+
+        .main-banner h2 {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .btn-main {
+            background-color: #fff;
+            color: #4e54c8;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-main:hover {
+            background-color: #8f94fb;
+            color: #fff;
+        }
+
+        /* Service section styles */
+        .services {
+            padding: 60px 0;
+            background-color: #fff;
+        }
+
+        .service-item {
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .service-item h4 {
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* File download table */
+        .table {
+            margin-top: 20px;
+        }
+
+        .table th {
+            background-color: #4e54c8;
+            color: #fff;
+        }
+
+        /* Pagination styles */
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            margin: 5px;
+            padding: 8px 12px;
+            background-color: #4e54c8;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .pagination .current {
+            color: #4e54c8;
+            font-weight: 600;
+        }
+        
+    </style>
+</head>
+
+<body>
+
+    <!-- ***** Header Area Start ***** -->
+    <header class="header-area header-sticky">
+      <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+          <div class="container" style="justify-content: space-between;">
+              <a class="navbar-brand" href="{% url 'index' %}" style="color: white; font-weight: bold;">SmartNotes</a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                  <ul class="navbar-nav ml-auto">
+                      <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                      <li class="nav-item"><a class="nav-link" href="{% url 'notes_details' %}">Notes</a></li>
+                      <li class="nav-item"><a class="nav-link" href="{% url 'usersignup' %}">Register</a></li>
+                      <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                  </ul>
+              </div>
+          </div>
+      </nav>
+      
+      </div>
+  </header>
+  <!-- ***** Header Area End ***** -->
+
+    <!-- ***** Hero Section Start ***** -->
+    <div class="main-banner" id="top">
+        <div class="container">
+            <h2>Welcome to SmartNotes</h2>
+            <p> A Note Sharing Platform for Students</p>
+            <a href="{% url 'usersignup' %}" class="btn-main">Get Started</a>
+        </div>
+    </div>
+    <!-- ***** Hero Section End ***** -->
+
+    <!-- ***** Notes Section Start ***** -->
+    <div class="services section" id="services">
+        <div class="container">
+            <h3>Available Notes</h3>
+            <div class="row">
+                {% for i in data_list %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-item">
+                        <div class="icon">
+                            <img src="{% static 'images/service-01.png' %}" alt="notes">
+                        </div>
+                        <h4>{{ i.subject }}</h4>
+                        <p>{{ i.notestitle }} by {{ i.nsuser.admin.first_name }} {{ i.nsuser.admin.last_name }}</p>
+                        <p>{{ i.notesdesc }}</p>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>File 1</th>
+                                <td><a href="{{ i.file1.url }}" target="_blank" class="btn btn-primary btn-sm">Download</a></td>
+                            </tr>
+                            {% if i.file2 %}
+                            <tr>
+                                <th>File 2</th>
+                                <td><a href="{{ i.file2.url }}" target="_blank" class="btn btn-primary btn-sm">Download</a></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <th>File 2</th>
+                                <td><span style="color: red">File not available</span></td>
+                            </tr>
+                            {% endif %}
+                            {% if i.file3 %}
+                            <tr>
+                                <th>File 3</th>
+                                <td><a href="{{ i.file3.url }}" target="_blank" class="btn btn-primary btn-sm">Download</a></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <th>File 3</th>
+                                <td><span style="color: red">File not available</span></td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- ***** Notes Section End ***** -->
+
+    <!-- ***** Pagination Start ***** -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if data_list.has_previous %}
+            <a href="?page=1">&laquo; First</a>
+            <a href="?page={{ data_list.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ data_list.number }} of {{ data_list.paginator.num_pages }}.
+            </span>
+
+            {% if data_list.has_next %}
+            <a href="?page={{ data_list.next_page_number }}">Next</a>
+            <a href="?page={{ data_list.paginator.num_pages }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    <!-- ***** Pagination End ***** -->
+
+
+
+    <!-- Scripts -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+
+</body>
+
+</html>

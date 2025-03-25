@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>SmartNotes || Home Page</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="{% static 'css/fontawesome.css' %}">
+    <link rel="stylesheet" href="{% static 'css/templatemo-scholar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        h1, h3 {
+            color: #4e54c8;
+        }
+
+
+
+        .main-nav ul li a {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .header-area {
+        background-color: #22577a;
+        padding: 10px 0;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .main-banner {
+          padding: 100px 0; /* Increased padding to prevent overlap */
+          margin-top: 70px; /* Added margin to push content below header */
+          background: linear-gradient(135deg, #38a3a5, #8f94fb);
+          text-align: center;
+          color: #fff;
+      }
+
+
+        .main-banner h2 {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .main-banner p {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        .btn-main {
+            background-color: #fff;
+            color: #4e54c8;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            margin-top: 30px;
+        }
+
+        .btn-main:hover {
+            background-color: #8f94fb;
+            color: #fff;
+        }
+
+        .services {
+            padding: 60px 0;
+            background-color: #fff;
+        }
+
+        .services h3 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .services p {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .about-btn {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        footer {
+          background: linear-gradient(135deg, #38a3a5, #8f94fb);
+            padding: 15px 0;
+            color: #fff;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ***** Header Area Start ***** -->
+    <header class="header-area header-sticky">
+        <div class="container">
+            <nav class="main-nav">
+                <!-- Logo -->
+                <h1 style="color: white; width: 100%;">SmartNotes</h1>
+                <!-- Menu -->
+                <ul class="nav">
+                    <li><a href="{% url 'index' %}" class="active">Home</a></li>
+                    <li><a href="{% url 'notes_details' %}">Notes</a></li>
+                    <li><a href="{% url 'usersignup' %}">Register</a></li>
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                </ul>
+                <a class="menu-trigger"><span>Menu</span></a>
+            </nav>
+        </div>
+    </header>
+    <!-- ***** Header Area End ***** -->
+
+    <!-- ***** Hero Section Start ***** -->
+    <div class="main-banner">
+        <div class="container">
+            <h2>Welcome to SmartNotes</h2>
+            <p>A Note Sharing Platform for Students</p>
+            <a  href="{% url 'usersignup' %}" class="btn-main" >Get Started</a>
+        </div>
+    </div>
+    <!-- ***** Hero Section End ***** -->
+
+    <!-- ***** About Us Section Start ***** -->
+    <div class="services section" id="services">
+        <div class="container">
+            <h3>About Us</h3>
+            <p>Share your notes with other users to collaborate and work together. Our platform ensures easy sharing and better learning.</p>
+            <p>By sharing knowledge, you not only help others but also reinforce your own understanding of concepts.</p>
+            <div class="about-btn">
+                <a href="{% url 'usersignup' %}" class="btn-main">Join Us</a>
+            </div>
+        </div>
+    </div>
+    <!-- ***** About Us Section End ***** -->
+
+    <!-- ***** Footer Start ***** -->
+    <footer>
+        <div class="container">
+            <p>SmartNotes: A Note Sharing Platform for Students</p>
+        </div>
+    </footer>
+    <!-- ***** Footer End ***** -->
+
+    <!-- Scripts -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+
+</body>
+
+</html>
