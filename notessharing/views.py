@@ -69,7 +69,7 @@ def do_login(request): # pylint: disable=missing-function-docstring
             user_type = user.user_type
             if user_type == '1':
                 return redirect('dashboard')
-            else: return redirect('dashboard')
+            return redirect('dashboard')
         else:
             messages.error(request, 'Email or Password is not valid')
             return redirect('login')  # Redirect back to the login page with an error message
@@ -95,24 +95,22 @@ def user_signup(request): # pylint: disable=missing-function-docstring
         if CustomUser.objects.filter(username=username).exists():
             messages.warning(request,'Username already exist')
             return redirect('usersignup')
-        else:
-            user = CustomUser(
-               first_name=first_name,
-               last_name=last_name,
-               username=username,
-               email=email,
-               user_type=2,
-               profile_pic = pic,
-            )
-            user.set_password(password)
-            user.save()
-            nsuser = UserReg(
-                admin = user,
-                mobilenumber = mobno,
-            )
-            nsuser.save()
-            messages.success(request,'Signup Successfully')
-            return redirect('usersignup')
+        user = CustomUser(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            user_type=2,
+            profile_pic = pic,
+        )
+        user.set_password(password)
+        user.save()
+        nsuser = UserReg(
+            admin = user,
+            mobilenumber = mobno,
+        )
+        nsuser.save()
+        messages.success(request,'Signup Successfully')
     return render(request,'signup.html')
 
 
@@ -122,8 +120,6 @@ def profile(request): # pylint: disable=missing-function-docstring
         try:
             customuser = CustomUser.objects.get(id=request.user.id)
             #userreg = UserReg.objects.get(admin_id=request.user.id)
-
-            # Update user data
             customuser.first_name = request.POST.get('first_name', customuser.first_name)
             customuser.last_name = request.POST.get('last_name', customuser.last_name)
             if 'profile_pic' in request.FILES:
@@ -137,6 +133,7 @@ def profile(request): # pylint: disable=missing-function-docstring
             messages.error(request, "Invalid data provided.")
         except IOError:
             messages.error(request, "Error accessing file.")
+        return redirect('profile')
     else:
         try:
             user = CustomUser.objects.get(id=request.user.id)
