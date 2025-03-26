@@ -70,13 +70,11 @@ def do_login(request): # pylint: disable=missing-function-docstring
             if user_type == '1':
                 return redirect('dashboard')
             return redirect('dashboard')
-        else:
-            messages.error(request, 'Email or Password is not valid')
-            return redirect('login')  # Redirect back to the login page with an error message
-    else:
+        messages.error(request, 'Email or Password is not valid')
+        return redirect('login')  # Redirect back to the login page with an error message
         # If the request method is not POST, redirect to the login page with an error message
-        messages.error(request, 'Invalid request method')
-        return redirect('login')
+    messages.error(request, 'Invalid request method')
+    return redirect('login')
 
 
 def user_signup(request): # pylint: disable=missing-function-docstring
@@ -134,19 +132,18 @@ def profile(request): # pylint: disable=missing-function-docstring
         except IOError:
             messages.error(request, "Error accessing file.")
         return redirect('profile')
-    else:
-        try:
-            user = CustomUser.objects.get(id=request.user.id)
-            nsuser = UserReg.objects.get(admin_id=request.user.id) # pylint: disable=no-member
-        except CustomUser.DoesNotExist: # pylint: disable=no-member
-            user = None
-        except UserReg.DoesNotExist: # pylint: disable=no-member
-            nsuser = None
-        context = {
-            "user": user,
-            "nsuser": nsuser,
-        }
-        return render(request, 'profile.html', context)
+    try:
+        user = CustomUser.objects.get(id=request.user.id)
+        nsuser = UserReg.objects.get(admin_id=request.user.id) # pylint: disable=no-member
+    except CustomUser.DoesNotExist: # pylint: disable=no-member
+        user = None
+    except UserReg.DoesNotExist: # pylint: disable=no-member
+        nsuser = None
+    context = {
+        "user": user,
+        "nsuser": nsuser,
+    }
+    return render(request, 'profile.html', context)
 
 def change_password(request): # pylint: disable=missing-function-docstring
     context = {}
@@ -166,9 +163,8 @@ def change_password(request): # pylint: disable=missing-function-docstring
             messages.success(request,'Password Change  Succeesfully!!!')
             user = User.objects.get(username=un)
             login(request,user)
-        else:
-            messages.success(request,'Current Password wrong!!!')
-            return redirect("change_password")
+        messages.success(request,'Current Password wrong!!!')
+        return redirect("change_password")
     return render(request,'change-password.html')
 
 
