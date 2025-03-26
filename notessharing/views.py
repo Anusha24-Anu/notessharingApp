@@ -1,3 +1,4 @@
+"""Import all modules and packages here"""
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login,logout
@@ -9,14 +10,14 @@ from django.core.exceptions import ObjectDoesNotExist
 from nssapp.models import CustomUser,UserReg,Notes
 User = get_user_model()
 
-def Index(request):
+def index(request): # pylint: disable=missing-function-docstring
     return render(request,'index.html')
 
 @login_required(login_url = '/')
-def BASE(request):
+def base(request): # pylint: disable=missing-function-docstring
     return render(request, 'base.html')
 
-def DASHBOARD(request):
+def dashboard(request): # pylint: disable=missing-function-docstring
     user_admin = request.user
     try:
         user_reg = UserReg.objects.get(admin=user_admin) # pylint: disable=no-member
@@ -49,16 +50,16 @@ def DASHBOARD(request):
     return render(request, 'dashboard.html', context)
 
 
-def LOGIN(request):
+def login_view(request): # pylint: disable=missing-function-docstring
     return render(request,'login.html')
 
 
-def doLogout(request):
+def do_logout(request): # pylint: disable=missing-function-docstring
     logout(request)
     request.session.flush()  # Clear the session including CSRF token
     return redirect('login')
 
-def doLogin(request):
+def do_login(request): # pylint: disable=missing-function-docstring
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -79,7 +80,7 @@ def doLogin(request):
         return redirect('login')
 
 
-def USERSIGNUP(request):
+def user_signup(request): # pylint: disable=missing-function-docstring
     if request.method == "POST":
         pic = request.FILES.get('pic')
         first_name = request.POST.get('first_name')
@@ -117,7 +118,7 @@ def USERSIGNUP(request):
 
 
 @login_required(login_url='/')
-def PROFILE(request):
+def profile(request): # pylint: disable=missing-function-docstring
     if request.method == "POST":
         try:
             customuser = CustomUser.objects.get(id=request.user.id)
@@ -156,7 +157,7 @@ def PROFILE(request):
         return render(request, 'profile.html', context)
 
 
-def CHANGE_PASSWORD(request):
+def change_password(request): # pylint: disable=missing-function-docstring
     context = {}
     ch = User.objects.filter(id = request.user.id)
     if len(ch)>0:
@@ -168,7 +169,7 @@ def CHANGE_PASSWORD(request):
         user = User.objects.get(id = request.user.id)
         un = user.username
         check = user.check_password(current)
-        if check == True:
+        if check is True:
             user.set_password(new_pas)
             user.save()
             messages.success(request,'Password Change  Succeesfully!!!')
@@ -180,7 +181,7 @@ def CHANGE_PASSWORD(request):
     return render(request,'change-password.html')
 
 
-def ADD_NOTES(request):
+def add_notes(request): # pylint: disable=missing-function-docstring
     if request.method == "POST":
         title = request.POST.get('notestitle')
         subject = request.POST.get('subject')
@@ -208,7 +209,7 @@ def ADD_NOTES(request):
     return render(request, 'add-notes.html')
 
 login_required(login_url='/')
-def MANAGE_NOTES(request):
+def manage_notes(request): # pylint: disable=missing-function-docstring
     userreg = UserReg.objects.get(admin_id=request.user.id) # pylint: disable=no-member
     data_list = Notes.objects.filter(nsuser = userreg) # pylint: disable=no-member
     paginator = Paginator(data_list, 10)  # Show 10 data per page
@@ -228,7 +229,7 @@ def MANAGE_NOTES(request):
     return render(request, 'manage-notes.html', context)
 
 login_required(login_url='/')
-def DELETE_NOTES(request,note_id):
+def delete_notes(request,note_id): # pylint: disable=missing-function-docstring
     del_data = Notes.objects.get(id = note_id) # pylint: disable=no-member
     del_data.delete()
     messages.success(request,'Record Delete Succeesfully!!!')
@@ -236,7 +237,7 @@ def DELETE_NOTES(request,note_id):
 
 
 login_required(login_url='/')
-def VIEW_NOTES(request,note_id):
+def view_notes(request,note_id): # pylint: disable=missing-function-docstring
     data_notes = Notes.objects.get(id = note_id) # pylint: disable=no-member
     context = {
         "data_notes":data_notes,
@@ -244,7 +245,7 @@ def VIEW_NOTES(request,note_id):
     return render(request,'update_notes.html',context)
 
 @login_required(login_url='/')
-def EDIT_NOTES(request):
+def edit_notes(request): # pylint: disable=missing-function-docstring
     if request.method == "POST":
         data_id = request.POST.get('notes_id')
         try:
@@ -278,7 +279,7 @@ def EDIT_NOTES(request):
     return render(request, 'manage-notes.html')
 
 
-def SEARCH_NOTES(request):
+def search_notes(request): # pylint: disable=missing-function-docstring
     if request.method == "GET":
         # Clear existing messages
         storage = messages.get_messages(request)
@@ -304,7 +305,7 @@ def SEARCH_NOTES(request):
     return render(request, 'search.html', {'searchdata': [], 'query': ''})
 
 login_required(login_url='/')
-def NOTES_DETAILS(request):
+def notes_details(request): # pylint: disable=missing-function-docstring
     data_list = Notes.objects.all() # pylint: disable=no-member
     paginator = Paginator(data_list, 10)
     page_number = request.GET.get('page')
