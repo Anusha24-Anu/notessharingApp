@@ -69,8 +69,7 @@ def do_login(request): # pylint: disable=missing-function-docstring
             user_type = user.user_type
             if user_type == '1':
                 return redirect('dashboard')
-            elif user_type == '2':
-                return redirect('dashboard')
+            else: return redirect('dashboard')
         else:
             messages.error(request, 'Email or Password is not valid')
             return redirect('login')  # Redirect back to the login page with an error message
@@ -130,17 +129,14 @@ def profile(request): # pylint: disable=missing-function-docstring
             if 'profile_pic' in request.FILES:
                 customuser.profile_pic = request.FILES['profile_pic']
             customuser.save()
-
             messages.success(request, "Your profile has been updated successfully")
             return redirect('profile')
-
         except ObjectDoesNotExist:
             messages.error(request, "User not found.")
         except ValueError:
             messages.error(request, "Invalid data provided.")
         except IOError:
             messages.error(request, "Error accessing file.")
-
     else:
         try:
             user = CustomUser.objects.get(id=request.user.id)
@@ -149,13 +145,11 @@ def profile(request): # pylint: disable=missing-function-docstring
             user = None
         except UserReg.DoesNotExist: # pylint: disable=no-member
             nsuser = None
-
         context = {
             "user": user,
             "nsuser": nsuser,
         }
         return render(request, 'profile.html', context)
-
 
 def change_password(request): # pylint: disable=missing-function-docstring
     context = {}
@@ -300,8 +294,6 @@ def search_notes(request): # pylint: disable=missing-function-docstring
                 messages.info(request, f"No results found for '{query}'")
 
             return render(request, 'search.html', {'searchdata': searchdata, 'query': query})
-        else:
-            return render(request, 'search.html', {'searchdata': [], 'query': query})
     return render(request, 'search.html', {'searchdata': [], 'query': ''})
 
 login_required(login_url='/')
